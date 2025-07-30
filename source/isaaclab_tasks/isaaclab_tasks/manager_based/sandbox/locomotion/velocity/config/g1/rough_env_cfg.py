@@ -8,6 +8,7 @@ from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.utils import configclass
 
+import isaaclab.envs.mdp as base_mdp
 import isaaclab_tasks.manager_based.sandbox.locomotion.velocity.mdp as mdp
 from isaaclab_tasks.manager_based.sandbox.locomotion.velocity.velocity_env_cfg import LocomotionVelocityRoughEnvCfg, ObservationsCfg, RewardsCfg
 
@@ -47,7 +48,12 @@ class G1Rewards(RewardsCfg):
         func=mdp.track_ang_vel_z_world_exp, weight=2.0, params={"command_name": "base_velocity", "std": 0.5}
     )
     track_ang_mom_z_world_exp = RewTerm(
-        func=mdp.track_ang_mom_z_world_exp, weight=1.0, params={"command_name": "base_velocity", "std": 0.5, "gamma": 0.1}
+        func=mdp.track_ang_mom_z_world_exp, weight=1.0, params={"command_name": "base_velocity", "std": 0.5, "gamma": 0.05}
+    )
+    base_height_l2 = RewTerm(
+        func=base_mdp.base_height_l2,
+        weight=-1.0,
+        params={"target_height": 0.74},
     )
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
