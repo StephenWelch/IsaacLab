@@ -48,12 +48,12 @@ class G1Rewards(RewardsCfg):
         func=mdp.track_ang_vel_z_world_exp, weight=2.0, params={"command_name": "base_velocity", "std": 0.5}
     )
     track_ang_mom_z_world_exp = RewTerm(
-        func=mdp.track_ang_mom_z_world_exp, weight=1.0, params={"command_name": "base_velocity", "std": 0.5, "gamma": 0.05}
+        func=mdp.track_ang_mom_z_world_exp, weight=2.0, params={"command_name": "base_velocity", "std": 0.5, "gamma": 0.5}
     )
     base_height_l2 = RewTerm(
         func=base_mdp.base_height_l2,
-        weight=-1.0,
-        params={"target_height": 0.74},
+        weight=-20.0,
+        params={"target_height": 0.73},
     )
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
