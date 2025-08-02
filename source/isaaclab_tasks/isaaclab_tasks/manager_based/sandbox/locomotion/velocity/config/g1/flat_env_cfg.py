@@ -28,8 +28,10 @@ class G1FlatEnvCfg(G1RoughEnvCfg):
         # self.rewards.track_ang_mom_z_world_exp.weight = 0.0
         # self.rewards.track_ang_vel_z_exp.weight = 1.0
 
-        self.rewards.track_ang_vel_z_exp.weight = 0.0
-        self.rewards.track_ang_mom_z_world_exp.weight = 1.0
+        self.rewards.track_ang_vel_z_exp.weight = 1.0
+        self.rewards.track_ang_mom_z_world_exp.weight = 0.5
+        # self.rewards.track_ang_mom_z_world_exp.params["gamma"] = 1.0
+        self.rewards.track_ang_vel_z_exp.params["std"] = 1.0
 
         self.rewards.lin_vel_z_l2.weight = -0.2
         self.rewards.action_rate_l2.weight = -0.005
