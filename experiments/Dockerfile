@@ -36,6 +36,9 @@ RUN set -e \
     && export PATH=/opt/conda/bin:$PATH \
     # Install Isaac Lab environment
     && ./isaaclab.sh -c \
+    && source $(conda info --base)/etc/profile.d/conda.sh \
+    && conda activate env_isaaclab \
+    && ./isaaclab.sh -i \
     && /opt/conda/bin/conda clean -a -y \
     # Configure Conda activation for all shells
     && echo 'source /opt/conda/etc/profile.d/conda.sh' >> /root/.bashrc \
