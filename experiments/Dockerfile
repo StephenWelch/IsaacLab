@@ -16,6 +16,7 @@ RUN set -e \
         bzip2 \
         ca-certificates \
         curl \
+        git \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     # Configure SSH
     && mkdir -p /var/run/sshd /root/.ssh \
@@ -54,10 +55,23 @@ ENV PATH="/opt/conda/envs/env_isaaclab/bin:/opt/conda/bin:$PATH" \
 # Expose SSH port
 EXPOSE 22
 
+# Setup git repository and prepare experiment script
+RUN set -e \
+    && cd /workspace/isaaclab \
+    && git init \
+    && git remote add origin https://github.com/StephenWelch/IsaacLab.git \
+    # Fetch all branches and commits from remote
+    && echo "Fetching repository data..." \
+    && git fetch origin \
+    && git reset --hard origin/main \
+    && git checkout $COMMIT_HASH \
+    && ./isaaclab.sh -i \
+    && chmod +x /workspace/isaaclab/experiments/experiment.sh
+
 COPY startup.sh /usr/local/bin/startup.sh
 RUN set -e \
     # Make startup script executable
     && chmod +x /usr/local/bin/startup.sh
 
 # Run startup script on container start
-ENTRYPOINT ["/usr/local/bin/startup.sh", "/workspace/IsaacLab/experiments/experiment.sh"]
+ENTRYPOINT ["/usr/local/bin/startup.sh", "/workspace/isaaclab/experiments/experiment.sh"]

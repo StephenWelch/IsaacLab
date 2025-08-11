@@ -47,33 +47,6 @@ start_tailscale() {
     fi
 }
 
-pull_repo() {
-    cd /workspace/isaaclab
-    git init
-    git remote add origin https://github.com/StephenWelch/IsaacLab.git
-    
-    # Fetch all branches and commits from remote
-    echo "Fetching repository data..."
-    git fetch origin
-    git reset --hard origin/main
-    
-    # Check out specific commit if provided
-    if [ -n "$COMMIT_HASH" ]; then
-        echo "Checking out commit: $COMMIT_HASH"
-        if git checkout $COMMIT_HASH; then
-            echo "Successfully checked out commit: $COMMIT_HASH"
-        else
-            echo "Warning: Failed to checkout commit $COMMIT_HASH, falling back to main branch"
-            git checkout main
-        fi
-    else
-        echo "No commit hash provided, checking out main branch"
-        git checkout main
-    fi
-
-    ./isaaclab.sh -i
-}
-
 cleanup() {
     echo "Cleaning up"
     tailscale down
@@ -83,9 +56,6 @@ cleanup() {
 # Start Tailscale
 echo "Starting Tailscale"
 start_tailscale
-
-echo "Pulling repo"
-pull_repo
 
 echo "Starting SSH server"
 /usr/sbin/sshd -D &
