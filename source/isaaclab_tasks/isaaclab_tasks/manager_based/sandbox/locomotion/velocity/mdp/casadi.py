@@ -6,7 +6,7 @@ from isaaclab.assets.articulation.articulation import Articulation
 from isaaclab.envs.manager_based_env import ManagerBasedEnv
 from isaaclab.managers import SceneEntityCfg
 
-G1_MJCF_PATH = "/home/stephen/code/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/manager_based/sandbox/locomotion/velocity/config/g1/mjcf/g1.xml"
+G1_MJCF_PATH = "../config/g1/mjcf/g1.xml"
 MJ_TO_IL_JOINT_MAP = {
     "waist_yaw_joint": "torso_joint",
 }
