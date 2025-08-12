@@ -2,6 +2,22 @@
 
 # Build script for Isaac Lab Docker image with SSH, Miniconda, and Tailscale
 
+# Parse command line arguments
+PUSH_IMAGE=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --push)
+            PUSH_IMAGE=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--push]"
+            exit 1
+            ;;
+    esac
+done
+
 # Check if SSH key exists
 if [ ! -f ~/.ssh/id_rsa.pub ]; then
     echo "Error: SSH public key not found at ~/.ssh/id_rsa.pub"
@@ -36,6 +52,13 @@ docker build \
 
 docker tag isaac-lab-personal ghcr.io/stephenwelch/isaaclab:latest
 
+# Push the image if --push flag was specified
+if [ "$PUSH_IMAGE" = true ]; then
+    echo "Pushing image to GitHub Container Registry..."
+    docker push ghcr.io/stephenwelch/isaaclab:latest
+    echo "Image pushed successfully!"
+fi
+
 # Clean up the commit hash file
 echo "Cleaning up..."
 # rm -f commit_hash.txt
@@ -43,4 +66,10 @@ echo "Cleaning up..."
 echo "Build complete! You can now run the container with:"
 echo "  docker run -d -p 2222:22 --name isaac-ssh isaac-lab-personal"
 echo "And connect via SSH with:"
-echo "  ssh -p 2222 root@localhost" 
+echo "  ssh -p 2222 root@localhost"
+
+if [ "$PUSH_IMAGE" = true ]; then
+    echo ""
+    echo "Image has been pushed to GHCR and can be pulled with:"
+    echo "  docker pull ghcr.io/stephenwelch/isaaclab:latest"
+fi 

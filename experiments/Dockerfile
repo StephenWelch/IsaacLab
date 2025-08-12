@@ -38,12 +38,8 @@ RUN set -e \
     && ./isaaclab.sh -c \
     && source $(conda info --base)/etc/profile.d/conda.sh \
     && conda activate env_isaaclab \
-    && ./isaaclab.sh -i \
-    && /opt/conda/bin/conda clean -a -y \
-    # Configure Conda activation for all shells
-    && echo 'source /opt/conda/etc/profile.d/conda.sh' >> /root/.bashrc \
-    && echo 'conda activate env_isaaclab' >> /root/.bashrc \
-    # && echo 'export PATH="/opt/conda/envs/env_isaaclab/bin:$PATH"' >> /root/.bashrc \
+    && ./isaaclab.sh -i rsl_rl\
+    && pip install scikit-learn wandb \
     # Install Tailscale
     && curl -fsSL https://tailscale.com/install.sh | sh \
     && mkdir -p /var/lib/tailscale /var/run/tailscale /var/log
@@ -63,12 +59,13 @@ RUN set -e \
     && cd /workspace/isaaclab \
     && git init \
     && git remote add origin https://github.com/StephenWelch/IsaacLab.git \
-    # Fetch all branches and commits from remote
-    && echo "Fetching repository data..." \
     && git fetch origin \
     && git reset --hard origin/main \
     && git checkout $COMMIT_HASH \
-    && ./isaaclab.sh -i \
+    && git submodule update --init --recursive \
+    && source $(conda info --base)/etc/profile.d/conda.sh \
+    && conda activate env_isaaclab \
+    && ./isaaclab.sh -i rsl_rl \
     && chmod +x /workspace/isaaclab/experiments/experiment.sh
 
 COPY startup.sh /usr/local/bin/startup.sh
