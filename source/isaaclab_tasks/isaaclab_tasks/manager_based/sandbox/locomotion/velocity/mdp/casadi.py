@@ -2,11 +2,14 @@ import torch
 import casadi as ca
 import pinocchio as pin
 from pinocchio import casadi as cpin
+import os
+from pathlib import Path
 from isaaclab.assets.articulation.articulation import Articulation
 from isaaclab.envs.manager_based_env import ManagerBasedEnv
 from isaaclab.managers import SceneEntityCfg
 
-G1_MJCF_PATH = "../config/g1/mjcf/g1.xml"
+# Construct path relative to current file and resolve to absolute
+G1_MJCF_PATH = str(Path(__file__).parent.parent / "config" / "g1" / "mjcf" / "g1.xml")
 MJ_TO_IL_JOINT_MAP = {
     "waist_yaw_joint": "torso_joint",
 }
