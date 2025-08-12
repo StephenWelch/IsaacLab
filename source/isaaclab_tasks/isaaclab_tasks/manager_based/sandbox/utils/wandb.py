@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class WandbFileWatcher:
     """Monitor wandb project for new model files."""
     
-    def __init__(self, path: Optional[str] = None, pattern: str = r"model_.*\.pt", download_dir: Optional[str] = None):
+    def __init__(self, project_name: Optional[str] = None, run_name: Optional[str] = None, pattern: str = r"model_.*\.pt", download_dir: Optional[str] = None):
         """
         Initialize the file watcher.
         
@@ -29,7 +29,8 @@ class WandbFileWatcher:
             project_name: Optional project name. If None, uses the active project.
             pattern: Regex pattern to match files (default: "model_.*\\.pt")
         """
-        self.path = path
+        self.project_name = project_name
+        self.run_name = run_name
         self.download_dir = download_dir
         self.api = wandb.Api()
         self.new_files: dict[str, File] = {}
@@ -40,16 +41,20 @@ class WandbFileWatcher:
     def get_run(self) -> Run:
         """Get the run from the path."""
         try:
-            runs = self.api.runs(self.path)
+            if self.run_name:
+                filters = {"config.experiment_name": self.run_name}
+            else:
+                filters = None
+            runs = self.api.runs(self.project_name, filters=filters, order="-created_at")
             return next(runs)
         except Exception as e:
-            logger.error(f"Error getting run from path {self.path}: {e}")
+            logger.error(f"Error getting run from path {self.project_name}: {e}")
             raise
     
     def update(self) -> dict[str, File]:
         """Get all files in the current wandb project."""
         try:
-            logger.info(f"Monitoring project: {self.path}")
+            logger.info(f"Monitoring project: {self.project_name}")
             
             # Get the project
             self.known_files.update(self.new_files)
@@ -114,7 +119,8 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Watch for new files in wandb project")
-    parser.add_argument("--path", type=str, help="Wandb path to a run or project (default: active run)")
+    parser.add_argument("--project_name", type=str, help="Wandb project name")
+    parser.add_argument("--run_name", type=str, help="Wandb run name")
     parser.add_argument("--download_dir", default=None, type=str, help="Directory to download files to (default: None)")
     parser.add_argument("--interval", type=int, default=5, help="Check interval in seconds (default: 30)")
     parser.add_argument("--pattern", type=str, default=r"model_.*\.pt", help="Regex pattern to match files (default: model_.*\\.pt)")
@@ -122,7 +128,7 @@ def main():
     args = parser.parse_args()
     
     try:
-        watcher = WandbFileWatcher(path=args.path, pattern=args.pattern, download_dir=args.download_dir)
+        watcher = WandbFileWatcher(project_name=args.project_name, run_name=args.run_name, pattern=args.pattern, download_dir=args.download_dir)
         watcher.watch(check_interval=args.interval)
     except Exception as e:
         logger.error(f"Failed to start file watcher: {e}")
