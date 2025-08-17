@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/isaac-lab:2.1.0
+FROM nvcr.io/nvidia/isaac-lab:2.2.0
 
 # Build arguments
 ARG SSH_PUBLIC_KEY
@@ -56,11 +56,10 @@ EXPOSE 22
 
 # Setup git repository and prepare experiment script
 RUN set -e \
-    && cd /workspace/isaaclab \
-    && git init \
-    && git remote add origin https://github.com/StephenWelch/IsaacLab.git \
-    && git fetch origin \
-    && git reset --hard origin/main \
+    && cd /workspace \
+    && rm -rf isaaclab \
+    && git clone https://github.com/StephenWelch/IsaacLab.git isaaclab \
+    && cd isaaclab \
     && git checkout $COMMIT_HASH \
     && git submodule update --init --recursive \
     && source $(conda info --base)/etc/profile.d/conda.sh \
