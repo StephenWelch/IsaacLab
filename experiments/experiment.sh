@@ -10,11 +10,11 @@ conda activate env_isaaclab
 # conda deactivate && conda activate env_isaaclab
 # pip install --upgrade wandb
 
-# python scripts/reinforcement_learning/rsl_rl/train.py --headless --log_project_name angmom-loco --logger wandb --task Sandbox-Velocity-Flat-G1-v0 --run_name test
-./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py \
-    --headless \
-    --log_project_name angmom-loco \
-    --logger wandb \
-    --task Isaac-Velocity-Flat-G1-v0 \
-    --run_name test \
-    --headless
+python scripts/reinforcement_learning/rsl_rl/train.py --headless --log_project_name angmom_loco --logger wandb --task Sandbox-Velocity-Flat-G1-v0 --run_name test
+# ./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py \
+#     --headless \
+#     --log_project_name angmom-loco \
+#     --logger wandb \
+#     --task Isaac-Velocity-Flat-G1-v0 \
+#     --run_name test \
+#     --headless

@@ -12,7 +12,6 @@ RUN set -e \
         ca-certificates \
         curl \
         git \
-        nvidia-smi \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     # Configure SSH
     && mkdir -p /var/run/sshd /root/.ssh \
