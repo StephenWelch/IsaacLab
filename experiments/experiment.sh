@@ -4,7 +4,8 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate env_isaaclab
 
 # Pinocchio/CasADi installation
-# conda install -c conda-forge -y pinocchio
+conda install -c conda-forge -y pinocchio
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH}"
 # mkdir -p "$CONDA_PREFIX/etc/conda/activate.d"
 # printf 'export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH}"\n' > "$CONDA_PREFIX/etc/conda/activate.d/000_set_ld_library_path.sh"
 # conda deactivate && conda activate env_isaaclab
