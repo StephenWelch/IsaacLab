@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# source $(conda info --base)/etc/profile.d/conda.sh
-# conda activate env_isaaclab
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate env_isaaclab
 
 # Pinocchio/CasADi installation
 # conda install -c conda-forge -y pinocchio

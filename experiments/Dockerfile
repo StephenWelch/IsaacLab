@@ -1,4 +1,5 @@
-FROM nvcr.io/nvidia/isaac-lab:2.2.0
+# FROM nvcr.io/nvidia/isaac-lab:2.2.0
+FROM isaac-lab-base
 
 # Install dependencies, configure SSH, install Conda, Isaac Lab, and Tailscale in a single layer
 RUN set -e \
@@ -11,6 +12,7 @@ RUN set -e \
         ca-certificates \
         curl \
         git \
+        nvidia-smi \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     # Configure SSH
     && mkdir -p /var/run/sshd /root/.ssh \
@@ -19,13 +21,6 @@ RUN set -e \
     && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
     && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
     && if [ -n "$SSH_PUBLIC_KEY" ]; then echo "$SSH_PUBLIC_KEY" >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys; fi \
-    # Install Miniconda
-    && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh \
-    && bash /tmp/miniconda.sh -b -p /opt/conda \
-    && rm /tmp/miniconda.sh \
-    && /opt/conda/bin/conda init bash \
-    && /opt/conda/bin/conda config --set auto_activate_base false \
-    && /opt/conda/bin/conda tos accept --override-channels --channel pkgs/main --channel pkgs/r \
     # Install Tailscale
     && curl -fsSL https://tailscale.com/install.sh | sh \
     # Clone personal repo
@@ -41,11 +36,10 @@ ARG TS_HOSTNAME=isaaclab-container
 ARG COMMIT_HASH
 
 # Final environment variables
-ENV PATH="/opt/conda/envs/env_isaaclab/bin:/opt/conda/bin:$PATH" \
-    CONDA_DEFAULT_ENV=env_isaaclab \
+ENV CONDA_DEFAULT_ENV=env_isaaclab \
     TS_HOSTNAME=${TS_HOSTNAME} \
     COMMIT_HASH=${COMMIT_HASH} \
-    ACCEPT_EULA=Y \
+    ACCEPT_EULA=Y
 
 # Expose SSH port
 EXPOSE 22
@@ -58,6 +52,7 @@ RUN set -e \
     && git fetch origin \
     && git checkout $COMMIT_HASH \
     && git submodule update --init --recursive \
+    && source $(conda info --base)/etc/profile.d/conda.sh && conda activate env_isaaclab \
     && ./isaaclab.sh -i rsl_rl \
     && chmod +x /workspace/isaaclab/experiments/experiment.sh \
     && chmod +x /usr/local/bin/startup.sh
