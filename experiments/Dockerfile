@@ -1,7 +1,7 @@
 # FROM nvcr.io/nvidia/isaac-lab:2.2.0
 FROM isaac-lab-base
 
-# Install dependencies, configure SSH, install Conda, Isaac Lab, and Tailscale in a single layer
+# Install dependencies
 RUN set -e \
     # Install system packages
     && apt-get update && apt-get install -y --no-install-recommends \
@@ -12,7 +12,8 @@ RUN set -e \
         ca-certificates \
         curl \
         git \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+        gnupg \
+    && apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     # Configure SSH
     && mkdir -p /var/run/sshd /root/.ssh \
     && echo 'root:password' | chpasswd \
@@ -28,6 +29,17 @@ RUN set -e \
     && rm -rf isaaclab \
     && git clone https://github.com/StephenWelch/IsaacLab.git isaaclab \
     && ln -s /isaac-sim isaaclab/_isaac_sim
+
+# Install CUDA
+RUN set -e \
+    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub \
+    && sh -c 'echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" > /etc/apt/sources.list.d/cuda.list' \
+    && apt update \
+    && apt install -y cuda-12-9 \
+    && apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV PATH="/usr/local/cuda-12.9/bin:$PATH" \
+    LD_LIBRARY_PATH="/usr/local/cuda-12.9/lib64:$LD_LIBRARY_PATH"
 
 # Build arguments
 ARG SSH_PUBLIC_KEY

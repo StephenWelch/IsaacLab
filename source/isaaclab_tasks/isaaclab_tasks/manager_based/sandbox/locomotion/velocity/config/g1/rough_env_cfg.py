@@ -25,14 +25,10 @@ class G1Observations(ObservationsCfg):
     class PolicyCfg(ObservationsCfg.PolicyCfg):
         """Observations for policy group."""
 
-        # centroidal_momentum = ObsTerm(func=mdp.centroidal_momentum)
-
-        def __post_init__(self):
-            self.enable_corruption = True
-            self.concatenate_terms = True
 
     # observation groups
-    policy: PolicyCfg = PolicyCfg()
+    policy: PolicyCfg = PolicyCfg(enable_corruption=True)
+    critic: PolicyCfg = PolicyCfg(enable_corruption=False)
 
 @configclass
 class G1Rewards(RewardsCfg):

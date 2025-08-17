@@ -132,6 +132,7 @@ class track_ang_mom_z_world_exp(ManagerTermBase):
             lambda: casadi.ccrba(self.cpin_model, self.cpin_data),
             env.num_envs,
             gen_pytorch=True,
+            dtype_str="double",
         )
 
     def __call__(self, env: ManagerBasedRLEnv, command_name: str, std: float, gamma: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
