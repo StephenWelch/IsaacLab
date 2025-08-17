@@ -26,9 +26,6 @@ RUN set -e \
     && /opt/conda/bin/conda init bash \
     && /opt/conda/bin/conda config --set auto_activate_base false \
     && /opt/conda/bin/conda tos accept --override-channels --channel pkgs/main --channel pkgs/r \
-    # Ensure conda is on PATH for subsequent commands in this layer
-    && export PATH=/opt/conda/bin:$PATH \
-    && source $(conda info --base)/etc/profile.d/conda.sh \
     # Install Tailscale
     && curl -fsSL https://tailscale.com/install.sh | sh \
     # Clone personal repo
@@ -36,21 +33,19 @@ RUN set -e \
     && cd /workspace \
     && rm -rf isaaclab \
     && git clone https://github.com/StephenWelch/IsaacLab.git isaaclab \
-    && ln -s /isaac-sim isaaclab/_isaac_sim \
+    && ln -s /isaac-sim isaaclab/_isaac_sim
 
 # Build arguments
 ARG SSH_PUBLIC_KEY
-ARG TS_AUTHKEY
 ARG TS_HOSTNAME=isaaclab-container
 ARG COMMIT_HASH
 
 # Final environment variables
 ENV PATH="/opt/conda/envs/env_isaaclab/bin:/opt/conda/bin:$PATH" \
     CONDA_DEFAULT_ENV=env_isaaclab \
-    TS_AUTHKEY=${TS_AUTHKEY} \
     TS_HOSTNAME=${TS_HOSTNAME} \
     COMMIT_HASH=${COMMIT_HASH} \
-    ACCEPT_EULA=Y
+    ACCEPT_EULA=Y \
 
 # Expose SSH port
 EXPOSE 22

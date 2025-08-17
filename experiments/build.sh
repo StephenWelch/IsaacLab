@@ -45,7 +45,6 @@ echo "Current commit hash: $COMMIT_HASH"
 echo "Building Docker image..."
 docker build \
     --build-arg SSH_PUBLIC_KEY="$SSH_PUBLIC_KEY" \
-    --build-arg TS_AUTHKEY="$TS_AUTHKEY" \
     --build-arg TS_HOSTNAME="isaaclab-container" \
     --build-arg COMMIT_HASH="$COMMIT_HASH" \
     -t isaac-lab-personal .
