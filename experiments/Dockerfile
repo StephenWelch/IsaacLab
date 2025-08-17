@@ -1,11 +1,5 @@
 FROM nvcr.io/nvidia/isaac-lab:2.2.0
 
-# Build arguments
-ARG SSH_PUBLIC_KEY
-ARG TS_AUTHKEY
-ARG TS_HOSTNAME=isaaclab-container
-ARG COMMIT_HASH
-
 # Install dependencies, configure SSH, install Conda, Isaac Lab, and Tailscale in a single layer
 RUN set -e \
     # Install system packages
@@ -35,14 +29,20 @@ RUN set -e \
     # Ensure conda is on PATH for subsequent commands in this layer
     && export PATH=/opt/conda/bin:$PATH \
     # Install Isaac Lab environment
-    && ./isaaclab.sh -c \
+    # && ./isaaclab.sh -c \
     && source $(conda info --base)/etc/profile.d/conda.sh \
-    && conda activate env_isaaclab \
-    && ./isaaclab.sh -i rsl_rl\
-    && pip install scikit-learn wandb \
+    # && conda activate env_isaaclab \
+    # && ./isaaclab.sh -i rsl_rl\
+    # && pip install scikit-learn wandb \
     # Install Tailscale
     && curl -fsSL https://tailscale.com/install.sh | sh \
     && mkdir -p /var/lib/tailscale /var/run/tailscale /var/log
+
+# Build arguments
+ARG SSH_PUBLIC_KEY
+ARG TS_AUTHKEY
+ARG TS_HOSTNAME=isaaclab-container
+ARG COMMIT_HASH
 
 # Final environment variables
 ENV PATH="/opt/conda/envs/env_isaaclab/bin:/opt/conda/bin:$PATH" \
@@ -54,6 +54,8 @@ ENV PATH="/opt/conda/envs/env_isaaclab/bin:/opt/conda/bin:$PATH" \
 # Expose SSH port
 EXPOSE 22
 
+COPY startup.sh /usr/local/bin/startup.sh
+
 # Setup git repository and prepare experiment script
 RUN set -e \
     && cd /workspace \
@@ -62,15 +64,14 @@ RUN set -e \
     && cd isaaclab \
     && git checkout $COMMIT_HASH \
     && git submodule update --init --recursive \
-    && source $(conda info --base)/etc/profile.d/conda.sh \
-    && conda activate env_isaaclab \
+    # && source $(conda info --base)/etc/profile.d/conda.sh \
+    # && conda activate env_isaaclab \
+    && ln -s /isaac-sim _isaac_sim\
+    && ./isaaclab.sh -p -m pip install --upgrade pip \
     && ./isaaclab.sh -i rsl_rl \
-    && chmod +x /workspace/isaaclab/experiments/experiment.sh
-
-COPY startup.sh /usr/local/bin/startup.sh
-RUN set -e \
-    # Make startup script executable
+    && chmod +x /workspace/isaaclab/experiments/experiment.sh \
     && chmod +x /usr/local/bin/startup.sh
+
 
 # Run startup script on container start
 ENTRYPOINT ["/usr/local/bin/startup.sh", "/workspace/isaaclab/experiments/experiment.sh"]

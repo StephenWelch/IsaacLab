@@ -1,10 +1,4 @@
 #!/bin/bash
-# set -e
-
-# Source conda and activate environment
-# source /opt/conda/etc/profile.d/conda.sh
-# conda activate env_isaaclab
-# export PATH="/opt/conda/envs/env_isaaclab/bin:$PATH"
 
 # Function to start Tailscale
 start_tailscale() {
