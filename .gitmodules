@@ -2,3 +2,6 @@
 	path = source/cusadi
 	url = https://github.com/KyleM73/cusadi.git
 	branch = feature/isaac_extension
+[submodule "source/rsl_rl"]
+	path = source/rsl_rl
+	url = https://github.com/StephenWelch/rsl_rl.git
