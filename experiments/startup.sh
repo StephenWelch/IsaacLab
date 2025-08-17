@@ -3,8 +3,6 @@
 # Function to start Tailscale
 start_tailscale() {
     if [ -n "$TS_AUTHKEY" ]; then
-        echo "Starting Tailscale..."
-        
         # Create state directory
         mkdir -p /var/lib/tailscale
         
