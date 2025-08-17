@@ -37,8 +37,6 @@ RUN set -e \
     && rm -rf isaaclab \
     && git clone https://github.com/StephenWelch/IsaacLab.git isaaclab \
     && ln -s /isaac-sim isaaclab/_isaac_sim \
-    && cd isaaclab \
-    && ./isaaclab.sh -p -m pip install wandb scikit-learn\
 
 # Build arguments
 ARG SSH_PUBLIC_KEY
