@@ -1,6 +1,6 @@
 [submodule "source/cusadi"]
 	path = source/cusadi
-	url = https://github.com/KyleM73/cusadi.git
+	url = https://github.com/StephenWelch/cusadi.git
 	branch = feature/isaac_extension
 [submodule "source/rsl_rl"]
 	path = source/rsl_rl
